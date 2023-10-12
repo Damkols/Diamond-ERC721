@@ -19,7 +19,7 @@ contract DiamondDeployer is DiamondUtils, IDiamondCut {
     function testDeployDiamond() public {
         //deploy facets
         dCutFacet = new DiamondCutFacet();
-        diamond = new Diamond(address(this), address(dCutFacet));
+        diamond = new Diamond(address(this), address(dCutFacet),"OurNFT","ONFT");
         dLoupe = new DiamondLoupeFacet();
         ownerF = new OwnershipFacet();
 

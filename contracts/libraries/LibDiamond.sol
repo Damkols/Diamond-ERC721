@@ -7,6 +7,18 @@ pragma solidity ^0.8.0;
 /******************************************************************************/
 import {IDiamondCut} from "../interfaces/IDiamondCut.sol";
 
+
+  struct Order {
+        address token;
+        uint256 tokenId;
+        uint256 price;
+        bytes signature;
+        uint88 deadline;
+        address owner;
+        bool active;
+    }
+
+
 library LibDiamond {
     error InValidFacetCutAction();
     error NotDiamondOwner();
@@ -47,6 +59,22 @@ library LibDiamond {
         mapping(bytes4 => bool) supportedInterfaces;
         // owner of the contract
         address contractOwner;
+        string _name;
+        // Token symbol
+        string _symbol;
+        uint256 tokenId;
+
+        mapping(uint256 tokenId => address) _owners;
+
+        mapping(address owner => uint256) _balances;
+
+        mapping(uint256 tokenId => address) _tokenApprovals;
+
+        mapping(address owner => mapping(address operator => bool)) _operatorApprovals;
+
+        mapping(uint256 => Order) orders;
+        address admin;
+        uint256 orderId;
     }
 
     function diamondStorage()
@@ -80,6 +108,16 @@ library LibDiamond {
         if (msg.sender != diamondStorage().contractOwner)
             revert NotDiamondOwner();
     }
+
+    function setERC721Details(
+        string memory _name,
+        string memory _symbol
+    ) internal {
+        DiamondStorage storage ds = diamondStorage();
+        ds._name = _name;
+        ds._symbol = _symbol;
+    }
+
 
     event DiamondCut(
         IDiamondCut.FacetCut[] _diamondCut,
